@@ -19,6 +19,8 @@ exceptiongroup==1.2.0
 fastavro==1.9.4
 fasteners==0.19
 flake8==7.0.0
+huggingface-hub[cli]<1.0
+gradio>=4.0.0
 Flask==3.0.3
 fqdn==1.5.1
 ftfy==6.2.0
