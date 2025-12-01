@@ -18,7 +18,7 @@ def set_attention_backend():
         os.environ["ATTN_BACKEND"] = "flash_attn"
         os.environ["SPARSE_ATTN_BACKEND"] = "flash_attn"
 
-set_attention_backend()
+# set_attention_backend()
 
 from typing import List, Union
 from hydra.utils import instantiate

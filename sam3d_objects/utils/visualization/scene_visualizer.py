@@ -15,7 +15,6 @@ from sam3d_objects.utils.visualization.image_mesh import (
 
 from sam3d_objects.utils.visualization.plotly.plot_scene import NO_BACKGROUND, default_axisargs
 from sam3d_objects.utils.visualization.plotly.save_scene import make_video as make_scene_video
-import seaborn as sns
 import copy
 
 
@@ -75,7 +74,7 @@ class SceneVisualizer:
         title="Tdfy Scene",
     ):
         if mask_colors is None:
-            mask_colors = sns.color_palette("husl", len(mask_names))
+            mask_colors = None;
         if mask_names is None:
             mask_names = [str(i) for i in range(len(pose_targets))]
 

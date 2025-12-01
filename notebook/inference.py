@@ -2,7 +2,7 @@
 import os
 
 # not ideal to put that here
-os.environ["CUDA_HOME"] = os.environ["CONDA_PREFIX"]
+env_prefix = os.environ.get("CONDA_PREFIX", "")
 os.environ["LIDRA_SKIP_INIT"] = "true"
 
 import sys
@@ -16,7 +16,6 @@ import math
 import utils3d
 import shutil
 import subprocess
-import seaborn as sns
 from PIL import Image
 import numpy as np
 import gradio as gr
@@ -386,7 +385,7 @@ def display_image(image, masks=None):
     grid = (1, 1) if masks is None else (2, 2)
     fig, axes = plt.subplots(*grid)
     if masks is not None:
-        mask_colors = sns.color_palette("husl", len(masks))
+        mask_colors = None;
         black_image = np.zeros_like(image[..., :3], dtype=float)  # background
         mask_display = np.copy(black_image)
         mask_union = np.zeros_like(image[..., :3])

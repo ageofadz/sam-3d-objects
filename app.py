@@ -9,41 +9,28 @@ from huggingface_hub import snapshot_download
 
 TAG = "hf"
 CKPT_ROOT = "checkpoints"
-CKPT_DIR = os.path.join(CKPT_ROOT, TAG)
+CKPT_DIR = "/data/sam3d/checkpoints"
 PIPELINE_CONFIG = os.path.join(CKPT_DIR, "pipeline.yaml")
 
 
 def ensure_checkpoints():
-    if os.path.exists(PIPELINE_CONFIG):
-        return
-
-    os.makedirs(CKPT_ROOT, exist_ok=True)
-    tmp_dir = os.path.join(CKPT_ROOT, f"{TAG}-download")
-
     token = os.environ.get("HF_TOKEN")
 
     snapshot_download(
         repo_id="facebook/sam-3d-objects",
         repo_type="model",
-        local_dir=tmp_dir,
-        token=token,
+        local_dir=CKPT_DIR,
         allow_patterns=["checkpoints/*"],
-        local_dir_use_symlinks=False,
+        token=token,
     )
-
-    src = os.path.join(tmp_dir, "checkpoints")
-    dst = CKPT_DIR
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
-    shutil.move(src, dst)
-    shutil.rmtree(tmp_dir)
 
 def load_inference():
     ensure_checkpoints()
+    os.environ["LIDRA_SKIP_INIT"] = "true"
+    from pathlib import Path
+    import subprocess
 
-    sys.path.append("notebook")
-    from inference import Inference
-
+    from sam3d_objects.pipeline.inference_pipeline import Inference
     inference = Inference(PIPELINE_CONFIG, compile=False)
     return inference
 
@@ -99,4 +86,11 @@ demo = gr.Interface(
 )
 
 if __name__ == "__main__":
+    import gradio as gr
+    demo = build_ui(inference)  # whatever your UI builder is
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False
+    )
     demo.launch()
