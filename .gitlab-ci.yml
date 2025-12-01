@@ -1,23 +1,27 @@
-image: docker:27.3.1   # 🔥 newer client, API >= 1.44
+image: docker:27.3.1
+
+services:
+  - name: docker:27.3.1-dind
+    command: ["--tls=false"]   # run daemon without TLS for simplicity
 
 stages:
   - build
 
 variables:
-  DOCKER_TLS_CERTDIR: ""   # avoid TLS issues inside GitLab runners
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_TLS_CERTDIR: ""        # tells client not to look for TLS certs
 
 before_script:
-  # Optional: just for debugging the environment
+  # Sanity check: should now work and show server info
   - docker version
-  - docker info
 
-  # Login to Docker Hub (set these as CI/CD variables in GitLab)
+  # Login to Docker Hub (set these in GitLab CI/CD variables)
   - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
 build-and-push:
   stage: build
   script:
-    # Build the image from your repo’s Dockerfile
+    # Build from your Dockerfile in this repo
     - docker build -t "$DOCKERHUB_USERNAME/sam3d:latest" .
 
     # Push to Docker Hub
