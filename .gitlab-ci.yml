@@ -1,0 +1,11 @@
+build-container:
+  stage: build
+  image: docker:stable
+  services:
+    - docker:dind
+  script:
+    - docker build -t sam3d .
+    - docker save sam3d > sam3d.tar
+  artifacts:
+    paths:
+      - sam3d.tar
