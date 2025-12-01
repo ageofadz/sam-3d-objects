@@ -31,8 +31,12 @@ RUN pip install --no-cache-dir \
 # spconv matching CUDA 12.x (cu120)
 RUN pip install --no-cache-dir "spconv-cu120==2.3.6"
 
-# pytorch3d
-RUN pip install --no-cache-dir "pytorch3d==0.7.8"
+FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel
+
+# System deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # MoGe (NOT on PyPI — must clone from GitHub)
 RUN pip install --no-cache-dir \
