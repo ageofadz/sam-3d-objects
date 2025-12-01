@@ -1,11 +1,24 @@
-build-container:
+image: docker:27.3.1   # 🔥 newer client, API >= 1.44
+
+stages:
+  - build
+
+variables:
+  DOCKER_TLS_CERTDIR: ""   # avoid TLS issues inside GitLab runners
+
+before_script:
+  # Optional: just for debugging the environment
+  - docker version
+  - docker info
+
+  # Login to Docker Hub (set these as CI/CD variables in GitLab)
+  - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+build-and-push:
   stage: build
-  image: docker:stable
-  services:
-    - docker:dind
   script:
-    - docker build -t sam3d .
-    - docker save sam3d > sam3d.tar
-  artifacts:
-    paths:
-      - sam3d.tar
+    # Build the image from your repo’s Dockerfile
+    - docker build -t "$DOCKERHUB_USERNAME/sam3d:latest" .
+
+    # Push to Docker Hub
+    - docker push "$DOCKERHUB_USERNAME/sam3d:latest"
